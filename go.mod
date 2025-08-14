@@ -1,4 +1,4 @@
-module github.com/apito-io/ApitoBolt
+module github.com/apito-io/apitoBolt
 
 go 1.23.3
 

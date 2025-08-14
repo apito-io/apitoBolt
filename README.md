@@ -3,6 +3,7 @@
 ApitoBolt is a modern, lightweight Storm-style wrapper around bbolt that provides Mongo-like collections, JSON documents, secondary indexes, ACID CRUD, and simple queries with a tiny footprint.
 
 ## Features
+
 - Collection-based API: `store.Collection("users")`
 - CRUD for Go structs (automatic JSON marshal/unmarshal)
 - Secondary indexes (unique and non-unique)
@@ -15,7 +16,7 @@ ApitoBolt is a modern, lightweight Storm-style wrapper around bbolt that provide
 ## Install
 
 ```bash
-go get github.com/apito-io/ApitoBolt
+go get github.com/apito-io/apitoBolt
 ```
 
 ## Quick Start
@@ -25,7 +26,7 @@ package main
 
 import (
     "fmt"
-    bolt "github.com/apito-io/ApitoBolt"
+    bolt "github.com/apito-io/apitoBolt"
 )
 
 type User struct {
@@ -60,18 +61,21 @@ func main() {
 ## Storm-like API Cheatsheet
 
 - Fetch one
+
 ```go
 var user User
 _ = users.One("Email", "john@x.com", &user)
 ```
 
 - Fetch many by equality
+
 ```go
 var users []User
 _ = users.Find("Role", "staff", &users, bolt.Skip(10), bolt.Limit(10), bolt.Reverse())
 ```
 
 - Fetch all / sorted by index
+
 ```go
 var users []User
 _ = users.All(&users, bolt.Limit(10))
@@ -79,6 +83,7 @@ _ = users.AllByIndex("CreatedAt", &users, bolt.Reverse())
 ```
 
 - Range and Prefix
+
 ```go
 var teens []User
 _ = users.Range("Age", 13, 19, &teens)
@@ -88,6 +93,7 @@ _ = users.Prefix("Name", "Jo", &jo)
 ```
 
 - Update helpers
+
 ```go
 // Non-zero field update
 _ = users.Update(&User{ID: "123", Name: "Jack", Age: 45})
@@ -100,6 +106,7 @@ _ = users.DeleteStruct(&User{ID: "123"})
 ```
 
 - Lifecycle
+
 ```go
 _ = users.Init()    // ensure buckets and index state
 _ = users.Drop()    // drop data and indexes
@@ -107,6 +114,7 @@ _ = users.ReIndex() // rebuild all indexes
 ```
 
 - Transactions
+
 ```go
 // High-level
 _ = store.Update(func(tx *bolt.Tx) error {
@@ -123,15 +131,16 @@ _ = tx.Commit()
 ```
 
 ## Design Notes
+
 - Index keys are order-preserving and type-tagged for correct range ordering
 - Per-document index metadata enables safe update/delete reindexing
 - Equality filters AND-combine when all fields are indexed; otherwise fallback scan
 
 ## License
+
 MIT (see `LICENSE`)
 
 ## Releasing
+
 - Local: `./scripts/release.sh` (requires GoReleaser)
 - CI: Tag a commit like `v0.1.0` and push; GitHub Actions will build and draft a release
-
-
