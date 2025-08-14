@@ -3,7 +3,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/apito-io/apitoBolt.svg)](https://pkg.go.dev/github.com/apito-io/apitoBolt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Current version: v0.1.0
+Current version: v0.1.1
 
 ApitoBolt is a modern, lightweight Storm-style wrapper around bbolt that provides Mongo-like collections, JSON documents, secondary indexes, ACID CRUD, and simple queries with a tiny footprint.
 

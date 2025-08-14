@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	q "github.com/apito-io/apitoBolt/q"
 )
 
 type User struct {
@@ -270,6 +272,58 @@ func TestStormAPI_All_AllByIndex_Find_Range_Prefix_Options(t *testing.T) {
 	}
 	if len(pref) < 2 {
 		t.Fatalf("prefix expected at least 2, got %d", len(pref))
+	}
+}
+
+func TestSelect_QueryAPI(t *testing.T) {
+	s := openTestStore(t)
+	col := s.Collection("users")
+	_ = col.EnsureIndex("age", false)
+	// seed
+	_, _ = col.Save(&User{Email: "s1@x", Name: "Adam", Age: 18})
+	_, _ = col.Save(&User{Email: "s2@x", Name: "Bob", Age: 20})
+	_, _ = col.Save(&User{Email: "s3@x", Name: "Carl", Age: 22})
+
+	// ID range (ids are sequential strings starting from 1 in this DB)
+	var users []User
+	err := col.Select(q.Gte("id", 1), q.Lte("id", 3)).Find(&users)
+	if err != nil || len(users) != 3 {
+		t.Fatalf("select id range: %v len=%d", err, len(users))
+	}
+
+	// Nested matchers
+	users = nil
+	err = col.Select(q.Or(
+		q.Gt("age", 100),
+		q.Lt("age", 19),
+		q.And(q.Eq("name", "Bob"), q.Gte("age", 20)),
+	)).Find(&users)
+	if err != nil || len(users) != 2 {
+		t.Fatalf("nested select expected 2, got %d err=%v", len(users), err)
+	}
+
+	// Chained options and ordering
+	users = nil
+	err = col.Select(q.Gte("age", 18)).OrderBy("age", "name").Reverse().Limit(2).Skip(0).Find(&users)
+	if err != nil || len(users) != 2 {
+		t.Fatalf("order/limit select: %v len=%d", err, len(users))
+	}
+
+	// First
+	var one User
+	err = col.Select(q.Gte("age", 18)).OrderBy("age").First(&one)
+	if err != nil || one.Age < 18 {
+		t.Fatalf("first failed: %v %+v", err, one)
+	}
+
+	// Delete matching
+	err = col.Select(q.Eq("name", "Bob")).Delete(new(User))
+	if err != nil {
+		t.Fatalf("delete select: %v", err)
+	}
+	var u User
+	if err := col.FindOne("name", "Bob", &u); !errors.Is(err, ErrNotFound) {
+		t.Fatalf("expected bob deleted")
 	}
 }
 
