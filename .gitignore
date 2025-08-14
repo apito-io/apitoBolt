@@ -1,0 +1,24 @@
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Build artifacts
+dist/
+bin/
+
+# IDE/editor
+.idea/
+.vscode/
+*.swp
+
+# OS files
+.DS_Store
+
+# Test dbs
+*.db
+*.sqlite
+*.bolt
+
+
