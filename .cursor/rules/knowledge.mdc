@@ -1,5 +1,7 @@
 ---
-alwaysApply: true
+description: Knowledge entry point for apitoBolt — read .knowledge/README.md before coding in apito/pkg/apitoBolt
+globs: apito/pkg/apitoBolt/**
+alwaysApply: false
 ---
 
 # Knowledge base — apitoBolt
